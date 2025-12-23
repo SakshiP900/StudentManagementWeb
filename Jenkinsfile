@@ -11,7 +11,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 // Checkout the main branch from GitHub
-                git branch: 'main', url: 'https://github.com/sakshiparadkar/StudentManagementWeb.git'
+                git branch: 'main', url: 'https://github.com/SakshiP900/StudentManagementWeb.git'
             }
         }
 

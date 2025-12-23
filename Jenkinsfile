@@ -2,36 +2,34 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = "student-management-system:latest"
-        DOCKER_REGISTRY = "sakshiparadkar/student-management-system"
-        EC2_HOST = "ec2-user@43.205.198.224"
-        SSH_CREDENTIALS = "ec2-ssh-credentials"  // Jenkins SSH key credential ID for EC2
+        DOCKER_IMAGE = "sakshiparadkar/student-management-system:latest"
+        EC2_HOST = "ec2-user@43.205.198.224"       // Your EC2 IP
+        SSH_CREDENTIALS = "ec2-ssh-credentials"    // Jenkins SSH key credential ID for EC2
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/SakshiP900/StudentManagementWeb.git'
+                // Checkout the main branch from GitHub
+                git branch: 'main', url: 'https://github.com/sakshiparadkar/StudentManagementWeb.git'
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Docker Build & Push') {
             steps {
-                script {
-                    sh "docker build -t $DOCKER_IMAGE ."
-                }
-            }
-        }
-
-        stage('Push to Docker Hub') {
-            steps {
-                withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', 
-                                                 usernameVariable: 'DOCKER_USER', 
+                withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials',
+                                                 usernameVariable: 'DOCKER_USER',
                                                  passwordVariable: 'DOCKER_PASS')]) {
                     script {
+                        // Build Docker image
+                        sh "docker build -t student-management-system:latest ."
+                        
+                        // Login to Docker Hub
                         sh "echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin"
-                        sh "docker tag $DOCKER_IMAGE $DOCKER_REGISTRY"
-                        sh "docker push $DOCKER_REGISTRY"
+                        
+                        // Tag and push to Docker Hub
+                        sh "docker tag student-management-system:latest $DOCKER_IMAGE"
+                        sh "docker push $DOCKER_IMAGE"
                     }
                 }
             }
@@ -41,12 +39,13 @@ pipeline {
             steps {
                 sshagent (credentials: ["${SSH_CREDENTIALS}"]) {
                     script {
+                        // Deploy on EC2: stop old container, remove it, run new container
                         sh """
                         ssh -o StrictHostKeyChecking=no $EC2_HOST '
-                            docker pull $DOCKER_REGISTRY &&
+                            docker pull $DOCKER_IMAGE &&
                             docker stop student-management || true &&
                             docker rm student-management || true &&
-                            docker run -d --name student-management -p 80:80 $DOCKER_REGISTRY
+                            docker run -d --name student-management -p 80:80 $DOCKER_IMAGE
                         '
                         """
                     }

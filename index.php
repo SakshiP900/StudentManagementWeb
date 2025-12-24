@@ -4,70 +4,101 @@
     <title>Student Management System</title>
     <meta charset="UTF-8">
     <style>
-        /* Reset body and default styles */
         body {
             margin: 0;
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            background-color: #ecf0f1;
+            color: #333;
         }
 
         /* Header */
         header {
-            background-color: #2c3e50; /* Dark blue */
+            background-color: #2c3e50;
             padding: 20px 0;
             text-align: center;
         }
 
         header h1 {
             margin: 0;
-            color: white; /* Make header text visible */
+            color: #fff;
             font-size: 32px;
         }
 
-        /* Navigation */
         nav {
             margin-top: 10px;
         }
 
         nav a {
-            color: white;                 /* White text */
-            text-decoration: none;        /* Remove underline */
+            color: #fff;
+            text-decoration: none;
             font-weight: bold;
-            padding: 10px 20px;           /* Space inside each link */
-            margin: 0 10px;               /* Space between links */
+            padding: 10px 20px;
+            margin: 0 5px;
             display: inline-block;
             border-radius: 5px;
             transition: background-color 0.3s;
         }
 
         nav a:hover {
-            background-color: #34495e;   /* Hover effect */
+            background-color: #34495e;
         }
 
-        /* Container */
-        .container {
-            padding: 20px 50px;
+        /* Sections */
+        section {
+            padding: 80px 50px;
         }
 
-        /* Tables */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-            margin-top: 20px;
+        section h2, section h3 {
+            margin-bottom: 20px;
         }
 
-        table, th, td {
-            border: 1px solid #ccc;
+        section p, section ul {
+            font-size: 18px;
+            line-height: 1.7;
         }
 
-        th, td {
-            padding: 12px;
-            text-align: left;
+        section ul {
+            padding-left: 20px;
         }
 
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
+        section ul li {
+            margin-bottom: 10px;
+        }
+
+        /* Section backgrounds with subtle contrast */
+        #welcome {
+            background: linear-gradient(135deg, #2980b9, #3498db);
+            color: #fff;
+        }
+
+        #features {
+            background-color: #f7f7f7;
+            color: #2c3e50;
+        }
+
+        #benefits {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: #fff;
+        }
+
+        #technologies {
+            background-color: #f7f7f7;
+            color: #2c3e50;
+        }
+
+        #cta {
+            background: linear-gradient(135deg, #e67e22, #d35400);
+            color: #fff;
+            text-align: center;
+            font-size: 20px;
+            padding: 60px 50px;
+            border-radius: 10px;
+            margin: 40px 50px;
+            transition: background 0.3s;
+        }
+
+        #cta:hover {
+            background: linear-gradient(135deg, #d35400, #e67e22);
         }
 
         /* Footer */
@@ -76,14 +107,6 @@
             color: white;
             text-align: center;
             padding: 15px 0;
-            margin-top: 30px;
-        }
-
-        /* Images */
-        img {
-            max-width: 100%;
-            height: auto;
-            margin-bottom: 20px;
         }
     </style>
 </head>
@@ -104,10 +127,35 @@
     </nav>
 </header>
 
-<div class="container">
-    <h2>Welcome</h2>
-    <p>This is a PHP & AWS RDS based Student Management System.</p>
-</div>
+<section id="welcome">
+    <h2>Welcome to the Student Management System</h2>
+    <p>This system is a comprehensive platform to manage students, courses, and teachers efficiently. Hosted on AWS EC2 with MySQL RDS, it provides reliability, scalability, and secure data management.</p>
+</section>
+
+<section id="features">
+    <h3>Key Features</h3>
+    <ul>
+        <li>Manage student information including personal details and academic records.</li>
+        <li>Maintain course details and schedules for easy tracking.</li>
+        <li>Track teacher information and assign them to courses.</li>
+        <li>Enroll students in courses and monitor progress.</li>
+        <li>Generate detailed reports for students, courses, and teachers.</li>
+    </ul>
+</section>
+
+<section id="benefits">
+    <h3>Benefits</h3>
+    <p>This system simplifies administrative tasks, reduces paperwork, and improves accuracy in record keeping. Administrators and educators can manage operations quickly and efficiently from any device.</p>
+</section>
+
+<section id="technologies">
+    <h3>Technologies Used</h3>
+    <p>Built with PHP, MySQL, and hosted on AWS, this system demonstrates cloud deployment and practical DevOps concepts including CI/CD pipelines and automation.</p>
+</section>
+
+<section id="cta">
+    Get started now! Navigate through the menu to add students, manage courses, enroll students, and view reports.
+</section>
 
 <footer>
     &copy; <?php echo date("Y"); ?> Student Management System. All rights reserved.
@@ -115,4 +163,3 @@
 
 </body>
 </html>
-

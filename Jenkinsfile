@@ -3,14 +3,12 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = "sakshiparadkar/student-management-system:latest"
-        EC2_HOST = "ec2-user@43.205.198.224"       // Your EC2 IP
-        SSH_CREDENTIALS = "ec2-ssh-credentials"    // Jenkins SSH key credential ID for EC2
+        KUBE_CONFIG = credentials('kubeconfig-credentials') // Jenkins credential with kubeconfig
     }
 
     stages {
         stage('Checkout') {
             steps {
-                // Checkout the main branch from GitHub
                 git branch: 'main', url: 'https://github.com/SakshiP900/StudentManagementWeb.git'
             }
         }
@@ -21,13 +19,8 @@ pipeline {
                                                  usernameVariable: 'DOCKER_USER',
                                                  passwordVariable: 'DOCKER_PASS')]) {
                     script {
-                        // Build Docker image
                         sh "docker build -t student-management-system:latest ."
-                        
-                        // Login to Docker Hub
                         sh "echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin"
-                        
-                        // Tag and push to Docker Hub
                         sh "docker tag student-management-system:latest $DOCKER_IMAGE"
                         sh "docker push $DOCKER_IMAGE"
                     }
@@ -35,18 +28,17 @@ pipeline {
             }
         }
 
-        stage('Deploy to EC2') {
+        stage('Deploy to Kubernetes') {
             steps {
-                sshagent (credentials: ["${SSH_CREDENTIALS}"]) {
+                withCredentials([file(credentialsId: 'kubeconfig-credentials', variable: 'KUBECONFIG_FILE')]) {
                     script {
-                        // Deploy on EC2: stop old container, remove it, run new container
                         sh """
-                        ssh -o StrictHostKeyChecking=no $EC2_HOST '
-                            docker pull $DOCKER_IMAGE &&
-                            docker stop student-management || true &&
-                            docker rm student-management || true &&
-                            docker run -d --name student-management -p 80:80 $DOCKER_IMAGE
-                        '
+                        export KUBECONFIG=$KUBECONFIG_FILE
+                        kubectl apply -f k8s/db-config.yml
+                        kubectl apply -f k8s/db-secret.yml
+                        kubectl apply -f k8s/student-management-deployment.yml
+                        kubectl apply -f k8s/student-management-service.yml
+                        kubectl rollout restart deployment student-management
                         """
                     }
                 }

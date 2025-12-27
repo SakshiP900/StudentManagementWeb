@@ -1,8 +1,8 @@
 <?php
-$host = "mydb.cbcqc2iu6rid.ap-south-1.rds.amazonaws.com";
-$user = "admin";
-$password = "admin123";
-$dbname = "mywebsite";
+$host = getenv("DB_HOST");
+$user = getenv("DB_USER");
+$password = getenv("DB_PASSWORD");
+$dbname = getenv("DB_NAME");
 
 $conn = mysqli_connect($host, $user, $password, $dbname);
 
@@ -10,4 +10,3 @@ if (!$conn) {
     die("Connection failed: " . mysqli_connect_error());
 }
 ?>
-

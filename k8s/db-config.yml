@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: db-config
+data:
+  DB_HOST: mydb.cbcqc2iu6rid.ap-south-1.rds.amazonaws.com
+  DB_NAME: mywebsite
+

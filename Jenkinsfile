@@ -30,16 +30,16 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 withCredentials([file(credentialsId: 'kubeconfig-credentials', variable: 'KUBECONFIG_FILE')]) {
-                    // Use sh with a list of arguments to securely use the secret file
-                    sh([
-                        'bash', '-c',
-                        'export KUBECONFIG="$KUBECONFIG_FILE" && ' +
-                        'kubectl apply -f k8s/db-config.yml && ' +
-                        'kubectl apply -f k8s/db-secret.yml && ' +
-                        'kubectl apply -f k8s/student-management-deployment.yml && ' +
-                        'kubectl apply -f k8s/student-management-service.yml && ' +
-                        'kubectl rollout restart deployment student-management'
-                    ])
+                    script {
+                        sh """
+                        export KUBECONFIG='\\\$KUBECONFIG_FILE'
+                        kubectl apply -f k8s/db-config.yml
+                        kubectl apply -f k8s/db-secret.yml
+                        kubectl apply -f k8s/student-management-deployment.yml
+                        kubectl apply -f k8s/student-management-service.yml
+                        kubectl rollout restart deployment student-management
+                        """
+                    }
                 }
             }
         }

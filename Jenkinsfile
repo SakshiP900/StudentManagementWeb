@@ -14,9 +14,11 @@ pipeline {
 
         stage('Docker Build & Push') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials',
-                                                 usernameVariable: 'DOCKER_USER',
-                                                 passwordVariable: 'DOCKER_PASS')]) {
+                withCredentials([usernamePassword(
+                    credentialsId: 'docker-hub-credentials',
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
                     script {
                         sh 'docker build -t student-management-system:latest .'
                         sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
@@ -29,7 +31,10 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             steps {
-                withCredentials([file(credentialsId: 'kubeconfig-minikube', variable: 'KUBECONFIG_FILE')]) {
+                withCredentials([file(
+                    credentialsId: 'kubeconfig-credentials',
+                    variable: 'KUBECONFIG_FILE'
+                )]) {
                     script {
                         sh """
                         export KUBECONFIG=\$KUBECONFIG_FILE

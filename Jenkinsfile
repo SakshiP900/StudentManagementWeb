@@ -6,6 +6,7 @@ pipeline {
     }
 
     stages {
+
         stage('Checkout') {
             steps {
                 git branch: 'main', url: 'https://github.com/SakshiP900/StudentManagementWeb.git'
@@ -20,10 +21,15 @@ pipeline {
                     passwordVariable: 'DOCKER_PASS'
                 )]) {
                     script {
+                        // Build Docker image
                         sh 'docker build -t student-management-system:latest .'
+
+                        // Login to Docker Hub
                         sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
-                        sh 'docker tag student-management-system:latest $DOCKER_IMAGE'
-                        sh 'docker push $DOCKER_IMAGE'
+
+                        // Tag and push image
+                        sh "docker tag student-management-system:latest $DOCKER_IMAGE"
+                        sh "docker push $DOCKER_IMAGE"
                     }
                 }
             }
@@ -36,8 +42,9 @@ pipeline {
                     variable: 'KUBECONFIG_FILE'
                 )]) {
                     script {
+                        // Export KUBECONFIG and deploy to Minikube
                         sh """
-                        export KUBECONFIG=\$KUBECONFIG_FILE
+                        export KUBECONFIG=$KUBECONFIG_FILE
                         kubectl apply -f k8s/db-config.yml
                         kubectl apply -f k8s/db-secret.yml
                         kubectl apply -f k8s/student-management-deployment.yml
@@ -47,6 +54,16 @@ pipeline {
                     }
                 }
             }
+        }
+
+    }
+
+    post {
+        success {
+            echo "Deployment succeeded!"
+        }
+        failure {
+            echo "Deployment failed!"
         }
     }
 }

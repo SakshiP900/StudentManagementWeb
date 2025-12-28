@@ -29,10 +29,10 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             steps {
-                withCredentials([file(credentialsId: 'kubeconfig-credentials', variable: 'KUBECONFIG_FILE')]) {
+                withCredentials([file(credentialsId: 'kubeconfig-minikube', variable: 'KUBECONFIG_FILE')]) {
                     script {
                         sh """
-                        export KUBECONFIG='\\\$KUBECONFIG_FILE'
+                        export KUBECONFIG=\$KUBECONFIG_FILE
                         kubectl apply -f k8s/db-config.yml
                         kubectl apply -f k8s/db-secret.yml
                         kubectl apply -f k8s/student-management-deployment.yml
